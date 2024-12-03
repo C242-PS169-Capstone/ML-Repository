@@ -1,0 +1,6 @@
+tensorflow
+numpy
+pickle5  # Untuk serialisasi dan deserialisasi model tokenizer
+langdetect
+googletrans==4.0.0-rc1  # Pastikan menggunakan versi ini karena versi lain mungkin bermasalah
+streamlit

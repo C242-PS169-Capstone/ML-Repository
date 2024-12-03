@@ -1,0 +1,92 @@
+curl -X POST http://127.0.0.1:5000/predict -H "Content-Type: application/json" -d "{\"text\": \"This is a test\"}"
+Jika Anda ingin melihat contoh request yang salah dengan menggunakan `curl`, berikut adalah beberapa contoh kesalahan umum yang bisa terjadi.
+
+### **Contoh 1: Format JSON yang Salah**
+Misalkan Anda mengirimkan data dengan format yang salah, seperti menggunakan tanda kutip ganda yang tidak seimbang atau tidak lengkap:
+
+**Salah (Tanda kutip tidak cocok):**
+```bash
+curl -X POST http://127.0.0.1:5000/predict -H "Content-Type: application/json" -d "{text: This is a test}"
+```
+**Pesan Kesalahan:**
+```json
+{
+    "error": "Invalid input, JSON data required"
+}
+```
+
+### **Contoh 2: Menggunakan `GET` bukan `POST`**
+Misalkan Anda mencoba menggunakan metode `GET` alih-alih `POST` untuk mengirimkan permintaan:
+
+**Salah (Menggunakan `GET`):**
+```bash
+curl -X GET http://127.0.0.1:5000/predict -H "Content-Type: application/json" -d "{\"text\": \"This is a test\"}"
+```
+**Pesan Kesalahan:**
+```json
+{
+    "error": "Method Not Allowed"
+}
+```
+
+### **Contoh 3: Tidak Mengirimkan `text` di Dalam JSON**
+Jika Anda tidak menyertakan kunci `text` dalam body JSON:
+
+**Salah (Tidak ada `text`):**
+```bash
+curl -X POST http://127.0.0.1:5000/predict -H "Content-Type: application/json" -d "{\"message\": \"This is a test\"}"
+```
+**Pesan Kesalahan:**
+```json
+{
+    "error": "Invalid input, \"text\" key is required"
+}
+```
+
+### **Contoh 4: Menyertakan Data Tidak Valid (Misalnya, String Kosong)**
+Jika Anda mengirimkan string kosong atau tidak valid untuk `text`:
+
+**Salah (String Kosong):**
+```bash
+curl -X POST http://127.0.0.1:5000/predict -H "Content-Type: application/json" -d "{\"text\": \"\"}"
+```
+**Pesan Kesalahan:**
+```json
+{
+    "error": "Invalid input, \"text\" must be a non-empty string"
+}
+```
+
+### **Contoh 5: JSON Tidak Terformat dengan Benar**
+Jika ada kesalahan pada format JSON (misalnya, tanda kutip hilang atau tidak seimbang), Anda akan mendapatkan pesan kesalahan karena JSON tidak dapat di-decode.
+
+**Salah (JSON Tidak Terformat dengan Benar):**
+```bash
+curl -X POST http://127.0.0.1:5000/predict -H "Content-Type: application/json" -d "{\"text: \"This is a test\"}"
+```
+**Pesan Kesalahan:**
+```json
+{
+    "error": "Invalid input, JSON data required"
+}
+```
+
+### **Contoh 6: Tidak Menggunakan Content-Type yang Tepat**
+Jika Anda tidak menetapkan `Content-Type: application/json` dalam header, server mungkin tidak akan memahami format data yang Anda kirimkan.
+
+**Salah (Content-Type tidak ditentukan):**
+```bash
+curl -X POST http://127.0.0.1:5000/predict -d "{\"text\": \"This is a test\"}"
+```
+**Pesan Kesalahan:**
+```json
+{
+    "error": "Invalid input, JSON data required"
+}
+```
+
+---
+
+### **Kesimpulan**
+
+Pastikan Anda selalu menggunakan format JSON yang benar dengan tanda kutip yang seimbang dan menyertakan kunci `text` dalam body JSON. Juga, perhatikan bahwa server API Flask Anda hanya mendukung metode `POST` di endpoint `/predict`, jadi pastikan menggunakan metode yang sesuai.
