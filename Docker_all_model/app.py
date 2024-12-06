@@ -7,6 +7,12 @@ import string
 from tensorflow.keras.models import load_model
 from langdetect import detect
 from googletrans import Translator
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 # Utility Functions
 def load_tokenizer(tokenizer_path):
@@ -208,12 +214,12 @@ def predict_model2(model, tokenizer, text):
 # Flask App
 app = Flask(__name__)
 
-# Load resources
-tokenizer1 = load_tokenizer('tokenizer_model1.pkl')
-model1 = load_model_file('model1.pkl')
+# Load resources from environment variables
+tokenizer1 = load_tokenizer(os.getenv('TOKENIZER_MODEL1_PATH'))
+model1 = load_model_file(os.getenv('MODEL1_PATH'))
 
-tokenizer2 = load_tokenizer('tokenizer_model2.pkl')
-model2 = load_model_file('model2.pkl')
+tokenizer2 = load_tokenizer(os.getenv('TOKENIZER_MODEL2_PATH'))
+model2 = load_model_file(os.getenv('MODEL2_PATH'))
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -262,5 +268,6 @@ def method_not_allowed(e):
 def not_found(e):
     return jsonify({'error': 'Not Found'}), 404
 
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 8080)), debug=True)

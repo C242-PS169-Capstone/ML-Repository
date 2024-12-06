@@ -1,5 +1,6 @@
-Flask==2.3.2
-tensorflow==2.13.0
-numpy==1.24.2
-langdetect==1.0.9
+Flask
+tensorflow
+numpy
 googletrans==4.0.0-rc1
+langdetect
+python-dotenv
