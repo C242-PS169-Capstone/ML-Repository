@@ -158,11 +158,17 @@ def remove_abbr (text):
     return abb_re.sub(replace, text)
 
 def remove_stopwords(text):
-    with open('stopwords.txt', 'r') as file:
+    stopwords_path = os.getenv('STOPWORDS_PATH')
+    if not stopwords_path or not os.path.exists(stopwords_path):
+        raise FileNotFoundError("Stopwords file not found or STOPWORDS_PATH is not set in .env")
+    
+    with open(stopwords_path, 'r') as file:
         stopwords = set(file.read().splitlines())
+    
     words = text.split()
     filtered_words = [word for word in words if word.lower() not in stopwords]
     return ' '.join(filtered_words)
+
 
 def remove_punctuation(text):
     return re.sub(r'[^\w\s]', '', text)
