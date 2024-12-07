@@ -157,17 +157,42 @@ def remove_abbr (text):
         return abb[match.group(0)]
     return abb_re.sub(replace, text)
 
-def remove_stopwords(text):
-    stopwords_path = os.getenv('STOPWORDS_PATH')
-    if not stopwords_path or not os.path.exists(stopwords_path):
-        raise FileNotFoundError("Stopwords file not found or STOPWORDS_PATH is not set in .env")
-    
-    with open(stopwords_path, 'r') as file:
-        stopwords = set(file.read().splitlines())
-    
+# Static stopwords list
+STOPWORDS = set([
+    "re", "now", "mightn", "by", "having", "which", "ours", "they", "doesn't", 
+    "here", "you'll", "or", "mustn't", "yourselves", "against", "had", "down", 
+    "no", "how", "he", "the", "you're", "haven't", "you", "about", "yourself", 
+    "she's", "when", "has", "in", "do", "out", "once", "theirs", "was", "our", 
+    "themselves", "only", "and", "hasn't", "more", "just", "are", "isn", "aren't", 
+    "this", "but", "so", "through", "such", "these", "be", "those", "further", 
+    "will", "didn", "you'd", "too", "itself", "both", "your", "shan", "other", 
+    "below", "o", "his", "its", "wasn", "don't", "under", "i", "up", "can", 
+    "didn't", "nor", "needn't", "with", "mightn't", "where", "to", "s", "won't", 
+    "not", "as", "again", "weren't", "wouldn't", "ve", "is", "whom", "until", 
+    "she", "have", "doesn", "you've", "am", "over", "y", "into", "all", "after", 
+    "mustn", "were", "because", "did", "couldn", "ll", "before", "some", "for", 
+    "their", "shouldn't", "myself", "m", "ain", "don", "each", "if", "hadn", 
+    "himself", "d", "hadn't", "it's", "that'll", "herself", "hasn", "a", "of", 
+    "weren", "me", "between", "them", "what", "aren", "shouldn", "we", "t", 
+    "that", "doing", "haven", "ourselves", "wasn't", "wouldn", "it", "an", 
+    "during", "while", "why", "should", "her", "hers", "most", "couldn't", 
+    "been", "needn", "at", "on", "shan't", "few", "very", "ma", "being", "who", 
+    "from", "my", "any", "won", "own", "above", "should've", "yours", "does", 
+    "then", "same", "him", "off", "there", "isn't", "than"
+])
+
+# Replace load_stopwords function
+def load_stopwords():
+    return STOPWORDS
+
+
+
+
+def remove_stopwords(text, stopwords):
     words = text.split()
     filtered_words = [word for word in words if word.lower() not in stopwords]
     return ' '.join(filtered_words)
+
 
 
 def remove_punctuation(text):
@@ -184,18 +209,22 @@ def remove_emoji(text):
         flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
+# Function remains unchanged
 def preprocess_text(text, tokenizer):
     text = translate_to_english(text)
     text = remove_abbr(text)
     text = remove_emoji(text)
     text = remove_punctuation(text)
     text = remove_special_characters(text)
-    text = remove_stopwords(text)
+
+    stopwords = load_stopwords()
+    text = remove_stopwords(text, stopwords)
 
     preprocessed = tokenizer.texts_to_sequences([text])
     max_len = 100
     preprocessed = tf.keras.preprocessing.sequence.pad_sequences(preprocessed, maxlen=max_len, padding='post')
     return preprocessed
+
 
 # Prediction Functions
 def predict_model1(model, tokenizer, text):
